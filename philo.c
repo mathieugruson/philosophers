@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:40:07 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/20 12:58:27 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/20 13:09:52 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     (void)argv; 
     pthread_t t1;
     
-	pthread_create(&t1, NULL, (void *)routine, NULL);
+	if (pthread_create(&t1, NULL, (void *)routine, NULL) != 0)
+		return (1);
     pthread_join(t1, NULL);
     return (0);    
 }
