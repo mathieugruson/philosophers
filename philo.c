@@ -1,69 +1,85 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/20 12:40:07 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/20 19:18:13 by mgruson          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 
-#include "philo.h"
+#define THREAD_NUM 4
 
-pthread_mutex_t mutexFuel;
-pthread_cond_t condFuel;
-int fuel = 0;
+typedef struct Task {
+    int a, b;
+} Task;
 
-void* fuel_filling(void* arg) {
-    for (int i = 0; i < 5; i++) {
-        pthread_mutex_lock(&mutexFuel);
-        fuel += 15;
-        printf("Filled fuel... %d\n", fuel);
-        pthread_mutex_unlock(&mutexFuel);
-        pthread_cond_signal(&condFuel);
-        sleep(1);
-    }
+Task taskQueue[256];
+int taskCount = 0;
+
+pthread_mutex_t mutexQueue;
+pthread_cond_t condQueue;
+
+void executeTask(Task* task) {
+    usleep(50000);
+    int result = task->a + task->b;
+    printf("The sum of %d and %d is %d\n", task->a, task->b, result);
 }
 
-void* car(void* arg) {
-    pthread_mutex_lock(&mutexFuel);
-    while (fuel < 40) {
-        printf("No fuel. Waiting...\n");
-        pthread_cond_wait(&condFuel, &mutexFuel);
-        // Equivalent to:
-        // pthread_mutex_unlock(&mutexFuel);
-        // wait for signal on condFuel
-        // pthread_mutex_lock(&mutexFuel);
+void submitTask(Task task) {
+    pthread_mutex_lock(&mutexQueue);
+    taskQueue[taskCount] = task;
+    taskCount++;
+    pthread_mutex_unlock(&mutexQueue);
+    pthread_cond_signal(&condQueue);
+}
+
+// 1 2 3 4 5
+// 2 3 4 5
+
+void* startThread(void* args) {
+    while (1) {
+        Task task;
+
+        pthread_mutex_lock(&mutexQueue);
+        while (taskCount == 0) {
+            pthread_cond_wait(&condQueue, &mutexQueue);
+        }
+
+        task = taskQueue[0];
+        int i;
+        for (i = 0; i < taskCount - 1; i++) {
+            taskQueue[i] = taskQueue[i + 1];
+        }
+        taskCount--;
+        pthread_mutex_unlock(&mutexQueue);
+        executeTask(&task);
     }
-    fuel -= 40;
-    printf("Got fuel. Now left: %d\n", fuel);
-    pthread_mutex_unlock(&mutexFuel);
 }
 
 int main(int argc, char* argv[]) {
-    pthread_t th[2];
-    pthread_mutex_init(&mutexFuel, NULL);
-    pthread_cond_init(&condFuel, NULL);
-    for (int i = 0; i < 2; i++) {
-        if (i == 1) {
-            if (pthread_create(&th[i], NULL, &fuel_filling, NULL) != 0) {
-                perror("Failed to create thread");
-            }
-        } else {
-            if (pthread_create(&th[i], NULL, &car, NULL) != 0) {
-                perror("Failed to create thread");
-            }
+    pthread_t th[THREAD_NUM];
+    pthread_mutex_init(&mutexQueue, NULL);
+    pthread_cond_init(&condQueue, NULL);
+    int i;
+    for (i = 0; i < THREAD_NUM; i++) {
+        if (pthread_create(&th[i], NULL, &startThread, NULL) != 0) {
+            perror("Failed to create the thread");
         }
     }
 
-    for (int i = 0; i < 2; i++) {
+    srand(time(NULL));
+    for (i = 0; i < 100; i++) {
+        Task t = {
+            .a = rand() % 100,
+            .b = rand() % 100
+        };
+        submitTask(t);
+    }
+
+    for (i = 0; i < THREAD_NUM; i++) {
         if (pthread_join(th[i], NULL) != 0) {
-            perror("Failed to join thread");
+            perror("Failed to join the thread");
         }
     }
-    pthread_mutex_destroy(&mutexFuel);
-    pthread_cond_destroy(&condFuel);
+    pthread_mutex_destroy(&mutexQueue);
+    pthread_cond_destroy(&condQueue);
     return 0;
 }

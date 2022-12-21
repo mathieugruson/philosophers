@@ -1,6 +1,6 @@
 NAME = philo
 
-CC = gcc -g3
+CC = gcc -pthread
 FLAGS = -Wall -Wextra -Werror
 
 SRC = philo.c \
