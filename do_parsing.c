@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:38:50 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/29 12:08:47 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/29 20:55:18 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,23 +44,23 @@ int	ft_atoi(char *str)
 	return ((int)nb);
 }		
 
-int	do_parsing(char **argv, int argc, t_args *args)
+int	do_parsing(char **argv, int argc, t_arg *arg)
 {
-	args->philo_nb = ft_atoi(argv[1]);
-	args->die_time = ft_atoi(argv[2]);
-	args->eat_time = ft_atoi(argv[3]);
-	args->sleep_time = ft_atoi(argv[4]);
-	if (args->philo_nb <= 0 || args->die_time == -1
-		|| args->eat_time == -1 || args->sleep_time == -1)
+	arg->philo_nb = ft_atoi(argv[1]);
+	arg->die_time = ft_atoi(argv[2]);
+	arg->eat_time = ft_atoi(argv[3]);
+	arg->sleep_time = ft_atoi(argv[4]);
+	if (arg->philo_nb <= 0 || arg->die_time == -1
+		|| arg->eat_time == -1 || arg->sleep_time == -1)
 		return (-1);
 	if (argc == 6)
 	{
-		args->must_eat = ft_atoi(argv[5]);
-		if (args->must_eat <= 0)
+		arg->must_eat = ft_atoi(argv[5]);
+		if (arg->must_eat <= 0)
 			return (-1);
 	}	
 	if (TEST)
-		printf(" philo nb : %i, die %i, eat %i, sleep %i, must_eat %i\n", \
-		args->philo_nb, args->die_time, args->eat_time, args->sleep_time, args->must_eat);
+		printf("philo nb : %i, die %i, eat %i, sleep %i, must_eat %i\n", \
+		arg->philo_nb, arg->die_time, arg->eat_time, arg->sleep_time, arg->must_eat);
 	return (0);
 }
