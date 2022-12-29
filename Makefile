@@ -3,7 +3,7 @@ NAME = philo
 CC = gcc -pthread
 FLAGS = -Wall -Wextra -Werror
 
-SRC = philo.c \
+SRC =	philo.c do_parsing.c 
 
 OBJ = $(SRC:.c=.o)
 
