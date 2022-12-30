@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:15:55 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 13:20:15 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 17:53:46 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	init_mutex(t_arg *arg)
 	int	i;
 
 	i = 0;
+	if (pthread_mutex_init(&(arg->finish_mutex), NULL))
+		return (-1);
 	if (pthread_mutex_init(&(arg->print), NULL))
 		return (-1);
 	arg->forks = malloc(sizeof(pthread_mutex_t) * arg->philo_num);

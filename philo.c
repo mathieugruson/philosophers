@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 14:34:17 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 18:46:41 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,47 @@ int	philo_printf(t_arg *arg, int philo_id, char *msg)
 	if (get_time(&time) == -1)
 		return (-1);
 	pthread_mutex_lock(&(arg->print));
-	printf("%lld %d %s\n", time - arg->start_time, philo_id + 1, msg);
-	pthread_mutex_unlock(&(arg->print));	
+	pthread_mutex_lock(&(arg->finish_mutex));
+	if (!arg->finish)
+	{
+		printf("%lld %d %s\n", time - arg->start_time, philo_id + 1, msg);
+		pthread_mutex_unlock(&(arg->finish_mutex));	
+	}
+	else
+		pthread_mutex_unlock(&(arg->finish_mutex));	
+	pthread_mutex_unlock(&(arg->print));
+	pthread_mutex_lock(&(arg->finish_mutex));
+	if(arg->finish)
+	{
+		pthread_mutex_unlock(&(arg->finish_mutex));	
+		return (-1);
+	}
+	else
+		pthread_mutex_unlock(&(arg->finish_mutex));	
 	return (0);
 }
 
 int	is_dead(t_philo *philo, t_arg *arg)
 {
-	long long time;
-	
-	if (get_time(&time) == -1)
+	long long now;
+
+	if (get_time(&now) == -1)
 		return (-1);	
-	if ((time - philo->last_eat_time) > arg->die_time)
+	if (TEST)
+		printf("c3 zero bis %i, now : %lli, philo->last_eat_time %lli arg->die_time %lli,  \n", philo->id, now, philo->last_eat_time,  (long long)arg->die_time);	
+	if ((now - philo->last_eat_time) > (long long)arg->die_time)
 	{
 		if (philo_printf(arg, philo->id, "die") == -1)
 			return (-1);
+		pthread_mutex_lock(&(arg->finish_mutex));
+		arg->finish = 1;
+		pthread_mutex_unlock(&(arg->finish_mutex));	
 		return (1);
 	}
 	return (0);
 }
 
-int	pass_time(long long eat_time, t_arg *arg)
+int	pass_time(long long eat_time, t_arg *arg, t_philo *philo)
 {
 	long long	start;
 	long long	now;
@@ -49,6 +69,16 @@ int	pass_time(long long eat_time, t_arg *arg)
 	while ((now - start) < eat_time)
 	{
 		if (get_time(&now) == -1)
+			return (-1);
+		pthread_mutex_lock(&(arg->finish_mutex));
+		if (arg->finish == 1)
+		{	
+			pthread_mutex_unlock(&(arg->finish_mutex));
+			return (-1);
+		}
+		else 
+			pthread_mutex_unlock(&(arg->finish_mutex));
+		if (is_dead(philo, arg))
 			return (-1);
 	}
 }
@@ -60,35 +90,55 @@ void *ft_thread(void *argv)
 
 	philo = argv;
 	arg = philo->arg;
-	// if (philo->id % 2)
-	// 	usleep(1000);
-	// else
-	// 	usleep(500);
+	if (philo->id % 2)
+		usleep(1000);
+	else
+		usleep(500);
+	if (TEST)
+		printf("c2 %i\n", philo->id);
 	while (philo->eat_count < arg->must_eat && !is_dead(philo, arg))
 	{
+		if (TEST)
+			printf("c4 %i philo->left %i\n", philo->id, philo->left);	
 		pthread_mutex_lock(&(arg->forks[philo->left]));
+		if (TEST)
+			printf("c4 bis %i\n", philo->id);
 		philo_printf(arg, philo->id, "has taken left fork");
 		if (arg->philo_num != 1)
 		{
+
 			pthread_mutex_lock(&(arg->forks[philo->right]));
 			if (philo_printf(arg, philo->id, "has taken right fork") == -1)
+			{
+				pthread_mutex_unlock(&(arg->forks[philo->right]));
+				pthread_mutex_unlock(&(arg->forks[philo->left]));	
 				break;
+			}
 			if (philo_printf(arg, philo->id, "is eating") == -1)
+			{
+				pthread_mutex_unlock(&(arg->forks[philo->right]));
+				pthread_mutex_unlock(&(arg->forks[philo->left]));	
 				break;
+			}
 			if (get_time(&(philo->last_eat_time)) == -1)
 				break;
 			philo->eat_count++;
-			if (pass_time((long long)arg->eat_time, arg) == -1)
+			if (pass_time((long long)arg->eat_time, arg, philo) == -1)
+			{
+				pthread_mutex_unlock(&(arg->forks[philo->right]));
+				pthread_mutex_unlock(&(arg->forks[philo->left]));
 				break;
+			}
 			pthread_mutex_unlock(&(arg->forks[philo->right]));
-			pthread_mutex_unlock(&(arg->forks[philo->left]));		
-			if (philo_printf(arg, philo->id, "is sleeping") ==-1)
+			pthread_mutex_unlock(&(arg->forks[philo->left]));
+			if (philo_printf(arg, philo->id, "is sleeping") == -1)
 				break;			
-			if (pass_time((long long)arg->sleep_time, arg) == -1)
+			if (pass_time((long long)arg->sleep_time, arg, philo) == -1)
 				break;
 			if (philo_printf(arg, philo->id, "is thinking") == -1)
 				break;
 		}
+			
 	}
 }
 
@@ -105,10 +155,15 @@ int	start_dinner(t_arg *arg, t_philo *philo)
 			return (-1);
 		i++;
 	}
-	// ft_philo_check_finish(arg, philo);
 	i = 0;
+	if (TEST)
+		printf("phtread_join %i\n", i);
 	while (i < arg->philo_num)
+	{
 		pthread_join(philo[i++].thread, NULL);
+		if (TEST)
+			printf("phtread_join bis %i\n", i);
+	}
 	return (0);
 }
 
@@ -126,6 +181,8 @@ int	main(int argc, char *argv[])
 		return (printf("init mutex failed"), -1);
 	if (init_philo_struct(&philo, &arg) == -1)
 		return (printf("init philo struct failed\n"), -1);
+	if (TEST)
+		printf("c1\n");
 	if (start_dinner(&arg, philo))
 		return (printf("dinner failed\n"), -1);
 	free_thread(&arg, philo);

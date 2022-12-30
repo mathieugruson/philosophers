@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 13:47:35 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 18:06:17 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/time.h>
 #include <limits.h>
 
-#define TEST 1
+#define TEST 0
 
 typedef struct s_philo
 {
@@ -44,6 +44,9 @@ typedef struct s_arg
 	long long		start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
+	int				finish;
+	pthread_mutex_t	finish_mutex;
+	
 }	t_arg;
 
 int	do_parsing(char **argv, int argc, t_arg *arg);
