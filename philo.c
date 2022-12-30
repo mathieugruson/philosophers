@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 13:57:33 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 14:34:17 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,18 +60,18 @@ void *ft_thread(void *argv)
 
 	philo = argv;
 	arg = philo->arg;
-	if (philo->id % 2)
-		usleep(1000);
-	else
-		usleep(500);
+	// if (philo->id % 2)
+	// 	usleep(1000);
+	// else
+	// 	usleep(500);
 	while (philo->eat_count < arg->must_eat && !is_dead(philo, arg))
 	{
 		pthread_mutex_lock(&(arg->forks[philo->left]));
-		philo_printf(arg, philo->id, "has taken a fork");
+		philo_printf(arg, philo->id, "has taken left fork");
 		if (arg->philo_num != 1)
 		{
 			pthread_mutex_lock(&(arg->forks[philo->right]));
-			if (philo_printf(arg, philo->id, "has taken a fork") == -1)
+			if (philo_printf(arg, philo->id, "has taken right fork") == -1)
 				break;
 			if (philo_printf(arg, philo->id, "is eating") == -1)
 				break;
@@ -80,15 +80,15 @@ void *ft_thread(void *argv)
 			philo->eat_count++;
 			if (pass_time((long long)arg->eat_time, arg) == -1)
 				break;
+			pthread_mutex_unlock(&(arg->forks[philo->right]));
+			pthread_mutex_unlock(&(arg->forks[philo->left]));		
 			if (philo_printf(arg, philo->id, "is sleeping") ==-1)
 				break;			
 			if (pass_time((long long)arg->sleep_time, arg) == -1)
 				break;
 			if (philo_printf(arg, philo->id, "is thinking") == -1)
 				break;
-			pthread_mutex_unlock(&(arg->forks[philo->right]));
 		}
-		pthread_mutex_unlock(&(arg->forks[philo->left]));		
 	}
 }
 
