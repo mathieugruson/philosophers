@@ -3,7 +3,7 @@ NAME = philo
 CC = gcc -pthread
 FLAGS = -Wall -Wextra -Werror
 
-SRC =	philo.c do_parsing.c
+SRC =	philo.c parsing.c init.c time.c free.c
 
 OBJ = $(SRC:.c=.o)
 

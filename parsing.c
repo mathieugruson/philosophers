@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   do_parsing.c                                       :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:38:50 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/29 20:55:18 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 13:45:59 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,13 @@ int	ft_atoi(char *str)
 
 int	do_parsing(char **argv, int argc, t_arg *arg)
 {
-	arg->philo_nb = ft_atoi(argv[1]);
+	arg->philo_num = ft_atoi(argv[1]);
 	arg->die_time = ft_atoi(argv[2]);
 	arg->eat_time = ft_atoi(argv[3]);
 	arg->sleep_time = ft_atoi(argv[4]);
-	if (arg->philo_nb <= 0 || arg->die_time == -1
+	if (get_time(&(arg->start_time)) == -1)
+		return (-1);
+	if (arg->philo_num <= 0 || arg->die_time == -1
 		|| arg->eat_time == -1 || arg->sleep_time == -1)
 		return (-1);
 	if (argc == 6)
@@ -58,9 +60,11 @@ int	do_parsing(char **argv, int argc, t_arg *arg)
 		arg->must_eat = ft_atoi(argv[5]);
 		if (arg->must_eat <= 0)
 			return (-1);
-	}	
+	}
+	else
+		arg->must_eat = INT_MAX;	
 	if (TEST)
 		printf("philo nb : %i, die %i, eat %i, sleep %i, must_eat %i\n", \
-		arg->philo_nb, arg->die_time, arg->eat_time, arg->sleep_time, arg->must_eat);
+		arg->philo_num, arg->die_time, arg->eat_time, arg->sleep_time, arg->must_eat);
 	return (0);
 }

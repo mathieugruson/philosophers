@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/29 20:54:52 by mgruson          ###   ########.fr       */
+/*   Updated: 2022/12/30 13:47:35 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,43 @@
 
 #define TEST 1
 
+typedef struct s_philo
+{
+	struct s_arg	*arg;
+	pthread_t		thread;
+	int				id;
+	int				left;
+	int				right;
+	long long		last_eat_time;
+	int				eat_count;
+}				t_philo;
+
 typedef struct s_arg
 {
-	int				philo_nb;
+	int				philo_num;
 	int				die_time;
 	int				eat_time;
 	int				sleep_time;
 	int				must_eat;
+	long long		start_time;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print;
 }	t_arg;
 
 int	do_parsing(char **argv, int argc, t_arg *arg);
+
+/* init.c */
+
+int	init_mutex(t_arg *arg);
+int	init_philo_struct(t_philo **philo, t_arg *arg);
+
+/* time.c */
+
+int	get_time(long long *ms);
+
+/* free.c */
+
+void	free_thread(t_arg *arg, t_philo *philo);
+
 
 #endif
