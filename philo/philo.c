@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 18:44:29 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 19:55:52 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,7 @@ void	stop_dinner(t_arg *arg, t_philo *philo)
 			pthread_mutex_unlock(&(arg->stop_mutex));
 			break ;
 		}
+		usleep(1000);
 	}
 }
 
