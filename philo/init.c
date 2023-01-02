@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:15:55 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 15:46:39 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 18:56:00 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,11 @@ int	init_philo_struct(t_philo **philo, t_arg *arg)
 		(*philo)[i].id = i;
 		(*philo)[i].left = i;
 		(*philo)[i].right = (i + 1) % arg->philo_num;
+		if ((*philo)[i].id % 2)
+		{
+			(*philo)[i].left = ((*philo)[i].id + 1) % arg->philo_num;
+			(*philo)[i].right = (*philo)[i].id;
+		}
 		(*philo)[i].last_eat_time = 0;
 		(*philo)[i].eat_count = 0;
 		i++;
