@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:33:24 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 22:34:24 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,10 @@ void	free_malloc_and_mutex(t_arg *arg, t_philo *philo);
 /* stop_dinner.c */
 
 void	stop_dinner(t_arg *arg, t_philo *philo);
+
+/* philo.c */
+
+void	stop_dinner(t_arg *arg, t_philo *philo);
+int		philo_printf(t_arg *arg, int id, char *msg);
 
 #endif

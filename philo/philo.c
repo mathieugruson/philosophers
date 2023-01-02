@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 21:32:25 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 23:01:13 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,11 @@ void *dinner_thread(void *argv)
 		if (!arg->stop)
 		{
 			pthread_mutex_unlock(&(arg->stop_mutex));
-			pthread_mutex_lock(&(arg->forks[philo->left])); // M3
+			pthread_mutex_lock(&(arg->forks[philo->left]));
 			philo_printf(arg, philo->id, "has taken a fork");
 			if (arg->philo_num != 1)
 			{
-				pthread_mutex_lock(&(arg->forks[philo->right])); // M4
+				pthread_mutex_lock(&(arg->forks[philo->right]));
 				philo_printf(arg, philo->id, "has taken a fork");
 				philo_printf(arg, philo->id, "is eating");
 				pthread_mutex_lock(&(arg->last_eat_time_mutex[philo->id]));
