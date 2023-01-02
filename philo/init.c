@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:15:55 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/31 15:32:55 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 15:46:39 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,16 @@ int	init_mutex(t_arg *arg)
 	while (i < arg->philo_num)
 	{
 		if (pthread_mutex_init(&(arg->forks[i]), NULL))
+			return (-1);
+		i++;
+	}
+	arg->last_eat_time_mutex = malloc(sizeof(pthread_mutex_t) * arg->philo_num);
+	if (!(arg->last_eat_time_mutex))
+		return (-1);
+	i = 0;
+	while (i < arg->philo_num)
+	{
+		if (pthread_mutex_init(&(arg->last_eat_time_mutex[i]), NULL))
 			return (-1);
 		i++;
 	}

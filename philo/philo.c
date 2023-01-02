@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/31 15:32:11 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:13:28 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ int	philo_printf(t_arg *arg, int id, char *msg)
 	if (get_time(&now) == -1)
 		return (-1);
 	pthread_mutex_lock(&(arg->print_mutex));
+	pthread_mutex_lock(&(arg->stop_mutex));	
 	if (!(arg->stop))
 	{
 		printf("%lld %d %s\n", now - arg->start_time, id + 1, msg);
 	}
+	pthread_mutex_unlock(&(arg->stop_mutex));
 	pthread_mutex_unlock(&(arg->print_mutex));
 	return (0);
 }
@@ -34,17 +36,27 @@ int	pass_time(long long wait_time, t_arg *arg)
 
 	if (get_time(&start) == -1)
 		return (-1);
-	while (!(arg->stop))
+	while (1)
 	{
-		if (get_time(&now) == -1)
-			return (-1);
-		if ((now - start) >= wait_time)
-			return (-1);
-		usleep(10);
+		pthread_mutex_lock(&(arg->stop_mutex));
+		if (!(arg->stop))
+		{
+			pthread_mutex_unlock(&(arg->stop_mutex));
+			if (get_time(&now) == -1)
+				return (-1);
+			if ((now - start) >= wait_time)
+				return (-1);
+			usleep(10);
+		}
+		else
+		{
+			pthread_mutex_unlock(&(arg->stop_mutex));
+			break ;
+		}
 	}
 }
 
-void *ft_thread(void *argv)
+void *dinner_thread(void *argv)
 {
 	t_arg	*arg;
 	t_philo *philo;
@@ -55,30 +67,46 @@ void *ft_thread(void *argv)
 		usleep(1000);
 	else
 		usleep(500);
-	while (!arg->stop)
+	while (1)
 	{
-		pthread_mutex_lock(&(arg->forks[philo->left]));
-		philo_printf(arg, philo->id, "has taken a fork");
-		if (arg->philo_num != 1)
+		pthread_mutex_lock(&(arg->stop_mutex));
+		if (!arg->stop)
 		{
-			pthread_mutex_lock(&(arg->forks[philo->right]));
+			pthread_mutex_unlock(&(arg->stop_mutex));
+			pthread_mutex_lock(&(arg->forks[philo->left]));
 			philo_printf(arg, philo->id, "has taken a fork");
-			philo_printf(arg, philo->id, "is eating");
-			if (get_time(&(philo->last_eat_time)) == -1)
+			if (arg->philo_num != 1)
+			{
+				pthread_mutex_lock(&(arg->forks[philo->right]));
+				philo_printf(arg, philo->id, "has taken a fork");
+				philo_printf(arg, philo->id, "is eating");
+				pthread_mutex_lock(&(arg->last_eat_time_mutex[philo->id]));
+				if (get_time(&(philo->last_eat_time)) == -1)
+					break ;
+				pthread_mutex_unlock(&(arg->last_eat_time_mutex[philo->id]));
+				philo->eat_count = philo->eat_count + 1;
+				pass_time((long long)arg->eat_time, arg);
+				pthread_mutex_unlock(&(arg->forks[philo->right]));
+			}
+			else
+				pass_time((long long)arg->die_time, arg);
+			pthread_mutex_unlock(&(arg->forks[philo->left]));
+			if (arg->must_eat == philo->eat_count)
+			{
+				pthread_mutex_lock(&(arg->finished_eat_mutex));
+				arg->finished_eat++;
+				pthread_mutex_unlock(&(arg->finished_eat_mutex));
 				break ;
-			philo->eat_count = philo->eat_count + 1;
-			pass_time((long long)arg->eat_time, arg);
-			pthread_mutex_unlock(&(arg->forks[philo->right]));
+			}
+			philo_printf(arg, philo->id, "is sleeping");
+			pass_time((long long)arg->sleep_time, arg);
+			philo_printf(arg, philo->id, "is thinking");
 		}
-		pthread_mutex_unlock(&(arg->forks[philo->left]));
-		if (arg->must_eat == philo->eat_count)
+		else
 		{
-			arg->finished_eat++;
+			pthread_mutex_unlock(&(arg->stop_mutex));
 			break ;
 		}
-		philo_printf(arg, philo->id, "is sleeping");
-		pass_time((long long)arg->sleep_time, arg);
-		philo_printf(arg, philo->id, "is thinking");
 	}
 	return (0);
 }
@@ -88,25 +116,45 @@ void	check_philo_death(t_arg *arg, t_philo *philo)
 	int			i;
 	long long	now;
 
-	while (!arg->stop)
+	while(1)
 	{
-		if ((arg->must_eat != INT_MAX) && (arg->philo_num == arg->finished_eat))
+		pthread_mutex_lock(&(arg->stop_mutex));
+		if (!arg->stop)
 		{
-			arg->stop = 1;
-			break ;
-		}
-		i = 0;
-		while (i < arg->philo_num)
-		{
-			if (get_time(&now) == -1)
-				break ;
-			if ((now - philo[i].last_eat_time) >= arg->die_time)
+			pthread_mutex_unlock(&(arg->stop_mutex));
+			pthread_mutex_lock(&(arg->finished_eat_mutex));
+			if ((arg->must_eat != INT_MAX) && (arg->philo_num == arg->finished_eat))
 			{
-				philo_printf(arg, i, "died");
+				pthread_mutex_lock(&(arg->stop_mutex));
 				arg->stop = 1;
+				pthread_mutex_lock(&(arg->stop_mutex));
 				break ;
 			}
-			i++;
+			pthread_mutex_unlock(&(arg->finished_eat_mutex));
+			i = 0;
+			while (i < arg->philo_num)
+			{
+				if (get_time(&now) == -1)
+					break ;
+				pthread_mutex_lock(&(arg->last_eat_time_mutex[i]));
+				if ((now - philo[i].last_eat_time) >= arg->die_time)
+				{
+					pthread_mutex_unlock(&(arg->last_eat_time_mutex[i]));
+					philo_printf(arg, i, "died");
+					pthread_mutex_lock(&(arg->stop_mutex));
+					arg->stop = 1;
+					pthread_mutex_unlock(&(arg->stop_mutex));
+					break ;
+				}
+				else
+					pthread_mutex_unlock(&(arg->last_eat_time_mutex[i]));
+				i++;
+			}
+		}
+		else
+		{
+			pthread_mutex_unlock(&(arg->stop_mutex));
+			break ;
 		}
 	}
 }
@@ -120,7 +168,7 @@ int	start_dinner(t_arg *arg, t_philo *philo)
 	{	
 		if (get_time(&philo[i].last_eat_time) == -1) // time au debut de la simulation
 			return (-1); 
-		if (pthread_create(&(philo[i].thread), NULL, ft_thread, &(philo[i])))
+		if (pthread_create(&(philo[i].thread), NULL, dinner_thread, &(philo[i])))
 			return (-1);
 		i++;
 	}

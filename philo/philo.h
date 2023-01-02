@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/31 15:32:40 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 15:38:58 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_arg
 	pthread_mutex_t	stop_mutex;
 	int				finished_eat;
 	pthread_mutex_t	finished_eat_mutex;
+	pthread_mutex_t	*last_eat_time_mutex;
 }	t_arg;
 
 int	do_parsing(char **argv, int argc, t_arg *arg);
