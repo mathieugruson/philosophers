@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:34:28 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:48:44 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,14 @@ void	stop_dinner(t_arg *arg, t_philo *philo)
 			pthread_mutex_lock(&(arg->finished_eat_mutex));
 			if ((arg->must_eat != INT_MAX) && (arg->philo_num == arg->finished_eat))
 			{
+				pthread_mutex_unlock(&(arg->finished_eat_mutex));
 				pthread_mutex_lock(&(arg->stop_mutex));
 				arg->stop = 1;
-				pthread_mutex_lock(&(arg->stop_mutex));
+				pthread_mutex_unlock(&(arg->stop_mutex));
 				break ;
 			}
-			pthread_mutex_unlock(&(arg->finished_eat_mutex));
+			else
+				pthread_mutex_unlock(&(arg->finished_eat_mutex));
 			i = 0;
 			while (i < arg->philo_num)
 			{

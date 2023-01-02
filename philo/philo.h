@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:20:07 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:37:00 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 #include <pthread.h>
 # include <sys/time.h>
 #include <limits.h>
-
-#define TEST 0
 
 typedef struct s_philo
 {

@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:38:50 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:33:01 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:40:15 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-int	ft_atoi(char *str)
+int	ft_atoi_philo(char *str)
 {
 	long	num;
 	int		i;
@@ -45,10 +45,10 @@ int	ft_atoi(char *str)
 
 int	do_parsing(char **argv, int argc, t_arg *arg)
 {
-	arg->philo_num = ft_atoi(argv[1]);
-	arg->die_time = ft_atoi(argv[2]);
-	arg->eat_time = ft_atoi(argv[3]);
-	arg->sleep_time = ft_atoi(argv[4]);
+	arg->philo_num = ft_atoi_philo(argv[1]);
+	arg->die_time = ft_atoi_philo(argv[2]);
+	arg->eat_time = ft_atoi_philo(argv[3]);
+	arg->sleep_time = ft_atoi_philo(argv[4]);
 	if (get_time(&(arg->start_time)) == -1)
 		return (-1);
 	if (arg->philo_num <= 0 || arg->die_time == -1
@@ -56,14 +56,11 @@ int	do_parsing(char **argv, int argc, t_arg *arg)
 		return (-1);
 	if (argc == 6)
 	{
-		arg->must_eat = ft_atoi(argv[5]);
-		if (arg->must_eat <= 0)
+		arg->must_eat = ft_atoi_philo(argv[5]);
+		if (arg->must_eat < 0)
 			return (-1);
 	}
 	else
 		arg->must_eat = INT_MAX;	
-	if (TEST)
-		printf("philo nb : %i, die %i, eat %i, sleep %i, must_eat %i\n", \
-		arg->philo_num, arg->die_time, arg->eat_time, arg->sleep_time, arg->must_eat);
 	return (0);
 }
