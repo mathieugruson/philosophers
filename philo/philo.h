@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:37:00 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 21:33:24 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,9 @@ time_t	get_time_in_ms(void);
 /* free.c */
 
 void	free_malloc_and_mutex(t_arg *arg, t_philo *philo);
+
+/* stop_dinner.c */
+
+void	stop_dinner(t_arg *arg, t_philo *philo);
 
 #endif
