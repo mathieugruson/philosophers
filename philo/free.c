@@ -6,13 +6,13 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:25:42 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 15:47:14 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:20:00 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	free_thread(t_arg *arg, t_philo *philo)
+void	free_malloc_and_mutex(t_arg *arg, t_philo *philo)
 {
 	int	i;
 

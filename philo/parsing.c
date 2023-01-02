@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:38:50 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 13:45:59 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:33:01 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,23 @@ int	ft_strlen(char *str)
 
 int	ft_atoi(char *str)
 {
-	unsigned int	nb;
-	int				i;
+	long	num;
+	int		i;
 
 	i = 0;
-	nb = 0;
-	while (str && str[i] == '0')
-		i++;
-	if (!str || !str[i] || ft_strlen(&str[i]) > 10)
-		return (-1);
-	if (!(str[i] >= '1' && str[i] <= '9'))
+	num = 0;
+	if (!str || !str[i] || ft_strlen(str) > 10)
 		return (-1);
 	while (str[i] >= '0' && str[i] <= '9')
-		nb = nb * 10 + str[i++] - 48;
+	{
+		num = num * 10 + str[i] - 48;
+		i++;
+	}
 	if (str[i])
 		return (-1);
-	if (nb > INT_MAX)
+	if (num > INT_MAX)
 		return (-1);
-	return ((int)nb);
+	return ((int)num);
 }		
 
 int	do_parsing(char **argv, int argc, t_arg *arg)

@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:13:28 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:34:28 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ int	pass_time(long long wait_time, t_arg *arg)
 			pthread_mutex_unlock(&(arg->stop_mutex));
 			if (get_time(&now) == -1)
 				return (-1);
-			if ((now - start) >= wait_time)
-				return (-1);
+			if ((now - start) >= wait_time)	
+				return (usleep(10), -1);
 			usleep(10);
 		}
 		else
@@ -111,7 +111,7 @@ void *dinner_thread(void *argv)
 	return (0);
 }
 
-void	check_philo_death(t_arg *arg, t_philo *philo)
+void	stop_dinner(t_arg *arg, t_philo *philo)
 {
 	int			i;
 	long long	now;
@@ -172,7 +172,7 @@ int	start_dinner(t_arg *arg, t_philo *philo)
 			return (-1);
 		i++;
 	}
-	check_philo_death(arg, philo);
+	stop_dinner(arg, philo);
 	i = 0;
 	while (i < arg->philo_num)
 	{
@@ -197,6 +197,6 @@ int	main(int argc, char *argv[])
 		return (printf("init philo struct failed\n"), -1);
 	if (start_dinner(&arg, philo))
 		return (printf("dinner failed\n"), -1);
-	free_thread(&arg, philo);
+	free_malloc_and_mutex(&arg, philo);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 12:42:40 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 15:38:58 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/02 16:20:07 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ int	init_philo_struct(t_philo **philo, t_arg *arg);
 
 /* time.c */
 
-int	get_time(long long *ms);
+int		get_time(long long *ms);
 time_t	get_time_in_ms(void);
 
 /* free.c */
 
-void	free_thread(t_arg *arg, t_philo *philo);
+void	free_malloc_and_mutex(t_arg *arg, t_philo *philo);
 
 #endif
