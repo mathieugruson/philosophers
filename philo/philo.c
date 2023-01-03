@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:43:12 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/03 12:04:01 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/03 12:27:38 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	pass_time(long long wait_time, t_arg *arg)
 				return (-1);
 			if ((now - start) >= wait_time)
 				return (usleep(10), -1);
+			if (wait_time == 0)
+				return (usleep(100), -1);
 			usleep(10);
 		}
 		else
