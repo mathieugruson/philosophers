@@ -6,11 +6,19 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:19:33 by mgruson           #+#    #+#             */
-/*   Updated: 2022/12/30 20:37:56 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/03 12:00:03 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+/* 
+This code converts a time value in seconds and microseconds
+to a time value in milliseconds. The time value is stored in
+the time struct, which has two fields: tv_sec and tv_usec.tv_sec
+stores the time value in seconds, while tv_usec stores the time
+value in microseconds.
+*/
 
 int	get_time(long long *ms)
 {
@@ -18,14 +26,6 @@ int	get_time(long long *ms)
 
 	if (gettimeofday(&time, NULL) == -1)
 		return (-1);
-	*ms = (time.tv_sec * 1000) + (time.tv_usec / 1000); // a appronfondir
-	return (0); 
-}
-
-time_t	get_time_in_ms(void)
-{
-	struct timeval		tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	*ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (0);
 }

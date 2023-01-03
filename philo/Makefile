@@ -1,6 +1,6 @@
 NAME = philo
 
-CC = gcc -g -pthread -fsanitize=thread
+CC = gcc -g -pthread #-fsanitize=thread
 FLAGS = -Wall -Wextra -Werror
 
 SRC =	philo.c \
@@ -8,8 +8,8 @@ SRC =	philo.c \
 		init.c \
 		time.c \
 		free.c \
-		stop_dinner.c
-
+		stop_dinner.c \
+		dinner_thread.c \
 
 OBJ = $(SRC:.c=.o)
 

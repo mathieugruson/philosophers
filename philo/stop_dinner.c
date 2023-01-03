@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:32:15 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 22:39:51 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/03 12:02:00 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	last_eat_time_is_higher_than_die_time(t_arg *arg, t_philo *philo, int i)
 {
-	long long now;
-	
+	long long	now;
+
 	while (i < arg->philo_num)
 	{
 		if (get_time(&now) == -1)
@@ -28,7 +28,7 @@ int	last_eat_time_is_higher_than_die_time(t_arg *arg, t_philo *philo, int i)
 			pthread_mutex_lock(&(arg->stop_mutex));
 			arg->stop = 1;
 			pthread_mutex_unlock(&(arg->stop_mutex));
-			return (-1) ;
+			return (-1);
 		}
 		else
 			pthread_mutex_unlock(&(arg->last_eat_time_mutex[i]));
@@ -63,10 +63,10 @@ void	stop_dinner(t_arg *arg, t_philo *philo)
 		if (!arg->stop)
 		{
 			if (all_philo_have_finished_to_eat(arg, philo) == -1)
-				break;
+				break ;
 			i = 0;
 			if (last_eat_time_is_higher_than_die_time(arg, philo, i) == -1)
-				break;
+				break ;
 		}
 		else
 		{

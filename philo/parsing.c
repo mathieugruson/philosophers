@@ -6,11 +6,11 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 16:38:50 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/02 16:40:15 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/03 12:07:43 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philo.h"
+#include "philo.h"
 
 int	ft_strlen(char *str)
 {
@@ -61,6 +61,6 @@ int	do_parsing(char **argv, int argc, t_arg *arg)
 			return (-1);
 	}
 	else
-		arg->must_eat = INT_MAX;	
+		arg->must_eat = INT_MAX;
 	return (0);
 }
