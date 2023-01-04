@@ -6,7 +6,7 @@
 /*   By: mgruson <mgruson@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/30 12:15:55 by mgruson           #+#    #+#             */
-/*   Updated: 2023/01/03 12:35:16 by mgruson          ###   ########.fr       */
+/*   Updated: 2023/01/04 14:58:09 by mgruson          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	init_philo_struct(t_philo **philo, t_arg *arg)
 		(*philo)[i].id = i;
 		(*philo)[i].left = i;
 		(*philo)[i].right = (i + 1) % arg->philo_num;
-		if ((*philo)[i].id == (arg->philo_num + 1))
+		if ((*philo)[i].id % 2)
 		{
 			(*philo)[i].left = ((*philo)[i].id + 1) % arg->philo_num;
 			(*philo)[i].right = (*philo)[i].id;
